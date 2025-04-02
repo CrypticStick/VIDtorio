@@ -17,5 +17,5 @@ export default defineConfig({
         port: 8080,
         hot: true
     },
-    base: '/VIDtorio/'
+    base: '/vidtorio/'
 })
