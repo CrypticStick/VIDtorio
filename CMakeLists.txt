@@ -11,6 +11,8 @@ if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
   set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS "Debug" "Release")
 endif()
 
+
+
 # Enables common warnings
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Wextra")
 
@@ -25,6 +27,11 @@ target_include_directories(display_gen PRIVATE
 
 # Set compile/link options
 set_target_properties(display_gen PROPERTIES
+    COMPILE_FLAGS "\
+    --use-port=sdl2\
+    --use-port=sdl2_image:formats=png\
+    --use-port=zlib\
+"
     LINK_FLAGS "\
     -s INITIAL_MEMORY=100663296\
     -s ALLOW_MEMORY_GROWTH\
