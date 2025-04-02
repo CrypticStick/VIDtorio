@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="dark">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Factorio Display Generator</title>
+  <link rel="icon" href="favicon.ico">
+  <script type="module" src="ts/main.ts"></script>
+</head>
+
+<body class="my-auto">
+  <main class="container-fluid h-100 d-flex align-items-center justify-content-center">
+    <div class="my-auto d-flex flex-column align-items-center">
+      <h1 class="mx-4 mt-3 mb-0">Factorio Display Generator</h1>
+      <section class="tracer m-3 mb-5 mb-sm-4 d-flex flex-column align-items-center justify-content-center">
+        <div class="canvas-container d-flex justify-content-center w-100 mb-2">
+          <div id="canvas-c1" class="canvas-element d-flex align-items-center p-2 me-md-1">
+            <canvas id="display-frame" class="m-0" width="512" height="512"></canvas>
+          </div>
+          <div id="canvas-c2" class="canvas-element d-flex align-items-center p-2 ms-md-1">
+            <canvas id="canvas" class="m-0" width="512" height="512"></canvas>
+          </div>
+        </div>
+        <form id="generate-form" novalidate>
+          <fieldset id="generate-fieldset" class="row g-3 p-2">
+            <div class="col-md-6">
+              <label for="image-file" class="form-label">Image file</label>
+              <input type="file" class="form-control" id="image-file" accept="image/*" required>
+              <div class="invalid-feedback">
+                Please select a valid image file.
+              </div>
+            </div>
+            <div class="col-md-4">
+              <label for="grid-width" class="form-label">Image resolution</label>
+              <div id="grid-resolution" class="input-group">
+                <input type="number" class="form-control" id="grid-width" value="64" min="3" max="1024" required>
+                <span class="input-group-text">x</span>
+                <input type="number" class="form-control" id="grid-height" value="64" min="3" max="1024" required>
+                <div class="invalid-feedback">
+                  Please choose values between 3 and 1024.
+                </div>
+              </div>
+            </div>
+            <div class="col-md-2">
+              <label for="grid-spacing" class="form-label">Spacing</label>
+              <input type="number" class="form-control" id="grid-spacing" value="3" min="2" max="16" required>
+              <div class="invalid-feedback">
+                Please choose a value between 2 and 16.
+              </div>
+            </div>
+            <div class="col-6">
+              <label for="image-brightness" class="form-label">Image brightness (<span
+                  id="image-brightness-text">100</span>%)</label>
+              <input type="range" class="form-range" id="image-brightness" min="0" max="300" value="100"
+                oninput="updateSlider()">
+              <script>
+                updateSlider();
+                function updateSlider() {
+                  document.getElementById("image-brightness-text").textContent = document.getElementById("image-brightness").value;
+                }
+              </script>
+            </div>
+            <div class="col-6">
+              <label for="sim-resolution" class="form-label">Simulation resolution</label>
+              <select class="form-select" id="sim-resolution">
+                <option value="0">Very High (64x64)</option>
+                <option value="1" selected>High (32x32)</option>
+                <option value="2">Medium (16x16)</option>
+                <option value="3">Low (8x8)</option>
+              </select>
+            </div>
+            <div class="col-6">
+              <div class="form-check">
+                <input type="checkbox" class="form-check-input" id="use-dithering">
+                <label for="use-dithering" class="form-check-label">Use Dithering</label>
+              </div>
+            </div>
+            <div class="col-3">
+              <div class="form-check">
+                <input type="checkbox" class="form-check-input" id="use-alpha">
+                <label for="use-alpha" class="form-check-label">Enable Transparency</label>
+              </div>
+            </div>
+            <div class="col-3">
+              <div class="form-check">
+                <input type="checkbox" class="form-check-input" id="use-binary">
+                <label for="use-binary" class="form-check-label">Output B/W</label>
+              </div>
+            </div>
+            <div class="col-12 d-flex justify-content-center justify-content-sm-start">
+              <button id="generate-btn" class="btn btn-primary idle" type="button">
+                <span class="spinner-border spinner-border-sm"></span>
+                <span id="generate-btn-msg">Generate blueprint</span>
+              </button>
+            </div>
+          </fieldset>
+        </form>
+      </section>
+    </div>
+  </main>
+  <footer class="position-absolute start-0 bottom-0 m-3">
+    <p class="m-0">© 2025 Sticks</p>
+  </footer>
+  <!-- Bootstrap "Generated blueprint" modal -->
+  <div class="modal fade" id="blueprint-modal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Generated blueprint</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <p>This blueprint has been saved to the clipboard:</p>
+          <textarea class="form-control" id="blueprint-string" readonly></textarea>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Bootstrap "Blueprint error" toast -->
+  <div class="toast-container position-fixed bottom-0 end-0 p-3 m-2">
+    <div id="blueprint-error-toast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+      <div class="toast-header">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+          class="bi bi-exclamation-triangle text-danger" viewBox="0 0 16 16">
+          <path
+            d="M7.938 2.016A.13.13 0 0 1 8.002 2a.13.13 0 0 1 .063.016.15.15 0 0 1 .054.057l6.857 11.667c.036.06.035.124.002.183a.2.2 0 0 1-.054.06.1.1 0 0 1-.066.017H1.146a.1.1 0 0 1-.066-.017.2.2 0 0 1-.054-.06.18.18 0 0 1 .002-.183L7.884 2.073a.15.15 0 0 1 .054-.057m1.044-.45a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767z" />
+          <path
+            d="M7.002 12a1 1 0 1 1 2 0 1 1 0 0 1-2 0M7.1 5.995a.905.905 0 1 1 1.8 0l-.35 3.507a.552.552 0 0 1-1.1 0z" />
+        </svg>
+        <strong class="me-auto ms-2 text-danger">Failed to generate blueprint</strong>
+        <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+      </div>
+      <div class="toast-body">
+        Something went wrong when generating the blueprint.
+        Consider setting a lower simulation resolution.
+        <div class="mt-2 pt-2 border-top">
+          <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="collapse"
+            data-bs-target="#collapseToastError" aria-expanded="false">
+            Show error
+          </button>
+          <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="toast">
+            Close
+          </button>
+        </div>
+        <div class="collapse mt-2" id="collapseToastError">
+          <div id="collapseToastErrorMsg" class="card card-body">Test</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+
+</html>

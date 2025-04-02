@@ -1,0 +1,333 @@
+// Import all of Bootstrap's CSS
+@import "../../node_modules/bootstrap/scss/bootstrap.scss";
+
+/* Sans Serif font "Raleway" Designed by Matt McInerney, Pablo Impallari, and
+  Rodrigo Fuenzalida; from Google Fonts */
+
+@font-face {
+  font-family: "Raleway";
+  src:
+    url('../fonts/raleway-variablefont_wght.woff2')
+    format("woff2 supports variations"),
+    url('../fonts/raleway-variablefont_wght.woff2')
+    format("woff2-variations");
+  font-display: swap;
+  font-weight: 100 900;
+  font-stretch: 25% 150%;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Raleway";
+  src:
+    url('../fonts/raleway-italic-variablefont_wght.woff2')
+    format("woff2 supports variations"),
+    url('../fonts/raleway-italic-variablefont_wght.woff2')
+    format("woff2-variations");
+  font-display: swap;
+  font-weight: 100 900;
+  font-stretch: 25% 150%;
+  font-style: italic;
+}
+
+/* Monospaced font "Fira Code" Designed by The Mozilla Foundation, Telefonica S.A.,
+  Nikita Prokopov; from Google Fonts */
+
+@font-face {
+  font-family: "Fira Code";
+  src:
+    url('../fonts/firacode-variablefont_wght.woff2')
+    format("woff2 supports variations"),
+    url('../fonts/firacode-variablefont_wght.woff2')
+    format("woff2-variations");
+  font-display: swap;
+  font-weight: 300 700;
+  font-stretch: 75% 125%;
+}
+
+:root {
+  --primary-color: #FF9F1B;
+  --primary-variant-color: #6f4509;
+  --secondary-color: #64b400;
+  --secondary-variant-color: #278036;
+  --background-color: #121212;
+  --surface-color: #20282e;
+  --surface-second-color: rgba(160, 177, 190, 0.15);
+  --error-color: #c00040;
+}
+
+html, body {
+  height: 100%;
+  width: 100%;
+  margin: 0;
+  overflow-y: auto;
+}
+
+body {
+  background-color: var(--background-color);
+  color: rgba(255, 255, 255, 0.87);
+  font: max(min(2.5vmin, 18px), 13px) "Raleway", sans-serif;
+}
+
+a {
+  color: var(--secondary-color);
+  text-decoration: none;
+}
+
+a:hover {
+  color: var(--secondary-variant-color);
+}
+
+section {
+  background-color: var(--surface-color);
+}
+
+section section {
+  background-color: var(--surface-second-color);
+}
+
+@keyframes tracer-anim {
+	0% {
+    transform: rotate(0deg);
+	}
+  100% {
+    transform: rotate(360deg);
+	}
+}
+
+.tracer {
+  border-radius: 1em;
+  position: relative;
+  overflow: hidden;
+}
+
+
+@property --tracer-color {
+  syntax: '<color>';
+  inherits: false;
+  initial-value: gray;
+}
+
+.tracer::before {
+  content: "";
+  position: absolute;
+  width: 400%;
+  height: 400%;
+  top: -150%;
+  left: -150%;
+  background:
+    conic-gradient(
+      from 315deg,
+      var(--background-color) 235deg,
+      var(--tracer-color)
+    );
+  animation: tracer-anim 5s linear infinite;
+  transition: --tracer-color 0.5s;
+}
+
+.tracer:hover::before {
+  --tracer-color: #0d6efd;
+}
+
+.tracer::after {
+  content: "";
+  position: absolute;
+  background-color: var(--surface-color);
+  inset: 0.5em;
+  border-radius: 1em;
+}
+
+.tracer * {
+  z-index: 1;
+}
+
+@keyframes textShine {
+  0% {
+      background-position: 100% 100%;
+  }
+  28% {
+      background-position: 0% 100%;
+  }
+  50% {
+    background-position: 0% 0%;
+  }
+  78% {
+    background-position: 100% 0%;
+  }
+  100% {
+    background-position: 100% 100%;
+  }
+}
+
+h1 {
+  position: relative;
+  font: max(min(6vmin, 3.5em), 2em) "Raleway", sans-serif;
+  font-variation-settings: 'wght' 700;
+  text-align: center;
+  color: #FFFFFF90;
+  background:
+    linear-gradient(to bottom, var(--background-color), 80%, transparent),
+    linear-gradient(to right, var(--background-color), 35%, var(--tracer-color), 65%, var(--background-color));
+
+  background-size: 200% 200%;
+  background-clip: text;
+  -webkit-background-clip: text;
+  mix-blend-mode: hard-light;
+  z-index: 0;
+  overflow: hidden;
+  animation: textShine 5s linear infinite;
+  transition: --tracer-color 0.5s;
+}
+
+h1:has(+.tracer:hover) {
+  --tracer-color: #0d6efd;
+}
+
+h2 {
+  font: 1.5em "Raleway", serif;
+  font-variation-settings: 'wght' 700;
+}
+
+h3 {
+  font: 1.1em "Raleway", serif;
+  font-variation-settings: 'wght' 500;
+  color: darkgrey;
+}
+
+hr {
+  border: 0;
+  width: 96%;
+  height: 1px;
+  background-color:var(--primary-color);
+}
+
+p {
+  line-height: 1.4em;
+}
+
+@keyframes scroll {
+  from {
+    background-position-x: 0%;
+  }
+  to {
+    background-position-x: 100%;
+  }
+}
+
+.color-cycle {
+  font-weight: normal;
+  background-color: var(--primary-variant-color);
+  background-image:
+    linear-gradient(
+      90deg,
+      indianred,
+      lightsalmon,
+      khaki,
+      lightgreen,
+      skyblue,
+      slateblue,
+      indianred,
+      lightsalmon,
+      khaki,
+      lightgreen
+    );
+  background-size: 300%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  -moz-text-fill-color: transparent;
+  animation: scroll 5s ease-in-out infinite;
+  transition: font-weight 0.25s;
+}
+
+.color-cycle:hover {
+  font-weight: bolder;
+}
+
+.idle > .spinner-border {
+  display: none;
+}
+
+canvas {
+  background-image:
+    linear-gradient(45deg, var(--surface-second-color) 25%, transparent 25%), 
+    linear-gradient(-45deg, var(--surface-second-color) 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, var(--surface-second-color) 75%),
+    linear-gradient(-45deg, transparent 75%, var(--surface-second-color) 75%);
+  background-size: 20px 20px;
+  background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
+  border-radius: 1em;
+  object-fit: contain;
+  image-rendering: pixelated;
+}
+
+
+@include media-breakpoint-up(xl) {
+  section {
+    padding: 2rem;
+  }
+}
+
+@include media-breakpoint-down(xl) {
+  section {
+    padding: 1.5rem;
+  }
+}
+
+
+@include media-breakpoint-up(sm) {
+  section {
+    max-height: 75vh;
+    max-width: 85vw;
+  }
+
+  .canvas-container {
+    flex-direction: row;
+    min-height: 120px;
+  }
+
+  .canvas-element {
+    width: 50%;
+    min-height: inherit;
+  }
+
+  canvas {
+    width: 100%;
+    max-height: 100%;
+  }
+
+  #canvas-c1 {
+    justify-content: flex-end;
+  }
+
+  #canvas-c2 {
+    justify-content: flex-start;
+  }
+}
+
+@include media-breakpoint-down(sm) {
+  section {
+    max-width: 85vw;
+  }
+
+  .canvas-container {
+    flex-direction: column;
+  }
+
+  .canvas-element {
+    width: 100%;
+  }
+
+  canvas {
+    width: 100%;
+    max-height: 40vh;
+  }
+
+  #canvas-c1 {
+    justify-content: center;
+  }
+
+  #canvas-c2 {
+    justify-content: center;
+  }
+}
