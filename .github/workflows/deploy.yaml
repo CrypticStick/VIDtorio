@@ -30,14 +30,25 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Set up Node
+      - name: Setup emsdk (v4.0.5)
+        uses: mymindstorm/setup-emsdk@v14
+        with:
+          version: 4.0.5
+          actions-cache-folder: 'emsdk-cache'
+      - name: Setup CMake (v4.0.0)
+        uses: lukka/get-cmake@v4.0.0
+      - name: CMake Configure
+        run: emcmake cmake -B build -DCMAKE_BUILD_TYPE=Release
+      - name: WebAssembly Build
+        run: cmake --build build
+      - name: Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: 'npm'
       - name: Install dependencies
         run: npm ci
-      - name: Build
+      - name: Node Build
         run: npm run build
       - name: Setup Pages
         uses: actions/configure-pages@v4
