@@ -1,6 +1,6 @@
 # VIDtorio
 
-A tool for generating static and animated displays in Factorio.
+[VIDtorio](https://crypticstick.github.io/VIDtorio/) is a web app for generating static and animated displays in Factorio.
 
 More details coming soon (WIP).
 
